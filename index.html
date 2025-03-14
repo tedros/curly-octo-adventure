@@ -11,6 +11,59 @@
     body, html { height: 100%; font-family: 'Inter', sans-serif; }
     a { text-decoration: none; color: inherit; }
     
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 1.25rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+    }
+    .nav-logo {
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: #111;
+      letter-spacing: -0.02em;
+      transition: color 0.3s ease;
+    }
+    .nav-logo:hover {
+      color: #0070f3;
+    }
+    .nav-btns {
+      display: flex;
+      gap: 1rem;
+    }
+    .nav-btns a {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      letter-spacing: -0.01em;
+      transition: all 0.2s ease;
+    }
+    .nav-btns a.login {
+      background: #0070f3;
+      color: white;
+      box-shadow: 0 2px 4px rgba(0,112,243,0.1);
+    }
+    .nav-btns a.login:hover {
+      background: #0061d5;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,112,243,0.2);
+    }
+    .nav-btns a.login:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0,112,243,0.1);
+    }
+    
     /* Section Styles */
     .section {
       position: relative;
@@ -77,13 +130,20 @@
   </style>
 </head>
 <body>
+  <!-- Navigation -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Recab</a>
+    <div class="nav-btns">
+      <a href="educator-login.html" class="login">Educator Login</a>
+      <a href="student-login.html" class="login">Student Login</a>
+    </div>
+  </nav>
 
   <!-- Hero Section -->
   <section class="section" style="background-image: url('https://images.unsplash.com/photo-1610500796385-3ffc1ae2f046?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NjIwNjV8MHwxfHNlYXJjaHwxfHxTdHVkZW50cyUyMGVuZ2FnZWQlMjBpbiUyMGR5bmFtaWMlMjBsZWFybmluZ3xlbnwxfDB8fHwxNzQxNjI3NTkwfDA&ixlib=rb-4.0.3&q=80&w=1080');">
     <div class="content">
       <h1>Revolutionize Education with Recab</h1>
       <p>Transforming Education for All</p>
-      <a class="btn" href="https://builder.bookipi.com/pages/recab/">Learn More</a>
     </div>
   </section>
 
@@ -92,7 +152,18 @@
     <div class="content">
       <h2>Personalized Learning Paths</h2>
       <p>Every student is unique and learns at their own pace. Our AI-driven personalized learning paths adapt in real time based on performance and feedback.</p>
-      <a class="btn" href="#">Explore Personalized Learning</a>
+      <a class="btn" href="personalized-learning.html">Explore Personalized Learning</a>
+    </div>
+  </section>
+
+
+
+  <!-- AI-Driven Insights Section -->
+  <section class="section" style="background-image: url('https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NjIwNjV8MHwxfHNlYXJjaHwxfHxFZHVjYXRvcnMlMjBhbmFseXppbmclMjBwZXJmb3JtYW5jZSUyMGRhdGF8ZW58MXwwfHx8MTc0MTYyNzU5NXww&ixlib=rb-4.0.3&q=80&w=1080');">
+    <div class="content">
+      <h2>AI-Driven Insights for Educators</h2>
+      <p>Our AI technology delivers valuable insights into student progress and engagement. Empower educators with data to tailor instruction effectively.</p>
+      <a class="btn" href="ai-insights.html">Discover AI Insights</a>
     </div>
   </section>
 
@@ -101,27 +172,16 @@
     <div class="content">
       <h2>Integration of Unschooling Principles</h2>
       <p>We embrace an organic approach where curiosity drives exploration. Experience hands-on learning and pursue projects that spark genuine interest.</p>
-      <a class="btn" href="#">Learn About Unschooling</a>
+      <a class="btn" href="unschooling.html">Learn About Unschooling</a>
     </div>
   </section>
-
-  <!-- AI-Driven Insights Section -->
-  <section class="section" style="background-image: url('https://images.unsplash.com/photo-1526628953301-3e589a6a8b74?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NjIwNjV8MHwxfHNlYXJjaHwxfHxFZHVjYXRvcnMlMjBhbmFseXppbmclMjBwZXJmb3JtYW5jZSUyMGRhdGF8ZW58MXwwfHx8MTc0MTYyNzU5NXww&ixlib=rb-4.0.3&q=80&w=1080');">
-    <div class="content">
-      <h2>AI-Driven Insights for Educators</h2>
-      <p>Our AI technology delivers valuable insights into student progress and engagement. Empower educators with data to tailor instruction effectively.</p>
-      <a class="btn" href="#">Discover AI Insights</a>
-    </div>
-  </section>
-
-
 
   <!-- Call to Action Section -->
   <section class="section" >
     <div class="content">
       <h2>Transform Your Learning Journey Today!</h2>
       <p>Join us in redefining education and embracing personalized learning powered by generative AI.</p>
-      <a class="btn" href="#">Explore Our Programs</a>
+      <a class="btn" href="signup.html">Sign Up</a>
     </div>
   </section>
   

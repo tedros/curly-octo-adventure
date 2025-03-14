@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teacher Dashboard - Recab</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const studentCards = document.querySelectorAll('.student-card');
+      const classSelect = document.getElementById('classSelect');
+      const timeSelect = document.getElementById('timeSelect');
+      const trendElements = document.querySelectorAll('.trend');
+
+      // Class-specific data
+      const classData = {
+        spanish: {
+          title: 'Spanish',
+          students: [
+            { name: 'Alice Smith', level: 'Advanced Level', sessions: 42, mastered: 850, inProgress: 120, engagement: 95, focus: 'Currently working on mastering subjunctive mood in complex sentences. Excelling in conversational Spanish.' },
+            { name: 'Bob Johnson', level: 'Intermediate Level', sessions: 35, mastered: 620, inProgress: 95, engagement: 82, focus: 'Practicing past perfect tense conjugations. Making good progress with regular verb patterns.' },
+            { name: 'Carol Lee', level: 'Beginner Level', sessions: 28, mastered: 450, inProgress: 85, engagement: 75, focus: 'Learning present tense regular verbs. Needs help with pronunciation and basic vocabulary.' },
+            { name: 'David Wilson', level: 'Advanced Level', sessions: 45, mastered: 920, inProgress: 150, engagement: 98, focus: 'Studying conditional perfect tense. Shows exceptional understanding of complex grammar.' },
+            { name: 'Emma Martinez', level: 'Intermediate Level', sessions: 32, mastered: 580, inProgress: 90, engagement: 78, focus: 'Working on irregular verbs in preterite tense. Strong grasp of basic conversation skills.'}
+          ],
+          overview: {
+            average: '87%',
+            totalSessions: 202,
+            totalMastered: '3.7k',
+            activeStudents: '85%',
+            avgEngagement: '82%',
+            atRisk: 2
+          },
+          columnLabels: {
+            mastered: 'Words',
+            inProgress: 'Words'
+          }
+        },
+        algebra: {
+          title: 'Algebra',
+          students: [
+            { name: 'Frank Chen', level: 'Advanced Level', sessions: 38, mastered: 45, inProgress: 12, engagement: 92, focus: 'Mastering complex polynomial equations and advanced factoring techniques. Shows strong analytical skills.' },
+            { name: 'Grace Kim', level: 'Intermediate Level', sessions: 32, mastered: 38, inProgress: 8, engagement: 85, focus: 'Understanding quadratic functions and their graphs. Making connections between algebraic and geometric representations.' },
+            { name: 'Henry Patel', level: 'Advanced Level', sessions: 40, mastered: 48, inProgress: 10, engagement: 94, focus: 'Exploring matrix operations and determinants. Excellent problem-solving abilities.' },
+            { name: 'Isabella Wong', level: 'Intermediate Level', sessions: 30, mastered: 35, inProgress: 9, engagement: 80, focus: 'Solving systems of linear equations. Good progress with substitution and elimination methods.' },
+            { name: 'Jack Thompson', level: 'Beginner Level', sessions: 25, mastered: 28, inProgress: 7, engagement: 72, focus: 'Learning basic algebraic expressions and operations. Needs support with negative numbers.'}
+          ],
+          overview: {
+            average: '85%',
+            totalSessions: 185,
+            totalMastered: '194',
+            activeStudents: '82%',
+            avgEngagement: '80%',
+            atRisk: 3
+          },
+          columnLabels: {
+            mastered: 'Concepts',
+            inProgress: 'Concepts'
+          }
+        },
+        biology: {
+          title: 'Biology',
+          students: [
+            { name: 'Karen Davis', level: 'Advanced Level', sessions: 35, mastered: 52, inProgress: 15, engagement: 90, focus: 'Researching gene expression and regulation mechanisms. Strong understanding of molecular biology.' },
+            { name: 'Liam Murphy', level: 'Intermediate Level', sessions: 30, mastered: 45, inProgress: 12, engagement: 83, focus: 'Studying cell membrane transport processes. Good grasp of diffusion and osmosis concepts.' },
+            { name: 'Maya Patel', level: 'Advanced Level', sessions: 38, mastered: 55, inProgress: 14, engagement: 95, focus: 'Investigating advanced cellular metabolism pathways. Excellent lab work and analysis.' },
+            { name: 'Noah Garcia', level: 'Intermediate Level', sessions: 28, mastered: 42, inProgress: 11, engagement: 78, focus: 'Learning about photosynthesis and cellular respiration. Making connections between processes.' },
+            { name: 'Olivia Kim', level: 'Beginner Level', sessions: 22, mastered: 32, inProgress: 9, engagement: 70, focus: 'Understanding basic cell structure and organelles. Needs help with terminology.'}
+          ],
+          overview: {
+            average: '83%',
+            totalSessions: 168,
+            totalMastered: '226',
+            activeStudents: '80%',
+            avgEngagement: '78%',
+            atRisk: 4
+          },
+          columnLabels: {
+            mastered: 'Concepts',
+            inProgress: 'Concepts'
+          }
+        }
+      };
+
+      // Function to update the dashboard with class-specific data
+      function updateDashboard(selectedClass) {
+        const data = classData[selectedClass];
+        
+        // Update title
+        document.querySelector('.overview-title').textContent = `Class Overview - ${data.title}`;
+        
+        // Get the student list container
+        const studentList = document.querySelector('.student-list');
+        if (studentList) {
+          // Store the header
+          const header = studentList.querySelector('.student-metrics-header');
+          
+          // Clear existing student cards
+          studentList.innerHTML = '';
+          
+          // Restore the header
+          if (header) studentList.appendChild(header);
+          
+          // Create and append new student cards
+          data.students.forEach(student => {
+            const card = createStudentCard();
+            updateStudentCard(card, student);
+            studentList.appendChild(card);
+          });
+        }
+        
+        // Update overview stats
+        document.querySelector('.stat-card:nth-child(1) .value').textContent = data.overview.average;
+        document.querySelector('.stat-card:nth-child(2) .value').textContent = data.overview.totalSessions;
+        document.querySelector('.stat-card:nth-child(3) .value').textContent = data.overview.totalMastered;
+        document.querySelector('.stat-card:nth-child(4) .value').textContent = data.overview.activeStudents;
+        document.querySelector('.stat-card:nth-child(5) .value').textContent = data.overview.avgEngagement;
+        document.querySelector('.stat-card:nth-child(6) .value').textContent = data.overview.atRisk;
+
+        // Update stat card labels
+        document.querySelector('.stat-card:nth-child(3) h3').textContent = `${data.columnLabels.mastered} Mastered`;
+        
+        // Update metric column headers
+        const metricHeaders = document.querySelectorAll('.student-metrics-header .metric');
+        metricHeaders[1].querySelector('.value').textContent = data.columnLabels.mastered;
+        metricHeaders[1].querySelector('.label').textContent = `${data.columnLabels.mastered} Mastered`;
+        metricHeaders[2].querySelector('.value').textContent = data.columnLabels.inProgress;
+        metricHeaders[2].querySelector('.label').textContent = `${data.columnLabels.inProgress} In Progress`;
+        
+        // Update student card labels
+        document.querySelectorAll('.student-card .metric').forEach((metric, index) => {
+          const label = metric.querySelector('.label');
+          if (index === 1) {
+            label.textContent = data.columnLabels.mastered;
+          } else if (index === 2) {
+            label.textContent = data.columnLabels.inProgress;
+          }
+        });
+      }
+
+      function createStudentCard() {
+        const card = document.createElement('div');
+        card.className = 'student-card';
+        card.innerHTML = `
+          <div class="avatar"></div>
+          <div class="info">
+            <div class="student-name">
+              <h4></h4>
+              <p></p>
+            </div>
+            <div class="tooltip-wrapper">
+              <div class="focus-tooltip" role="tooltip"></div>
+            </div>
+          </div>
+          <div class="metric">
+            <div class="value"></div>
+            <div class="label"></div>
+          </div>
+          <div class="metric">
+            <div class="value"></div>
+            <div class="label"></div>
+          </div>
+          <div class="metric">
+            <div class="value"></div>
+            <div class="label"></div>
+          </div>
+          <div class="metric">
+            <div class="value"></div>
+            <div class="label"></div>
+          </div>
+        `;
+        return card;
+      }
+
+      function updateStudentCard(card, student) {
+        // Set avatar initials
+        const avatar = card.querySelector('.avatar');
+        const initials = student.name.split(' ').map(n => n[0]).join('');
+        avatar.textContent = initials;
+
+        // Update student info and tooltip
+        const studentName = card.querySelector('.student-name');
+        studentName.querySelector('h4').textContent = student.name;
+        studentName.querySelector('p').textContent = student.level;
+        card.querySelector('.focus-tooltip').textContent = `Currently focusing on: ${student.focus}`;
+
+
+        
+        // Get all metrics
+        const metrics = card.querySelectorAll('.metric');
+        
+        // Update values and labels
+        const labels = ['Sessions', 'Mastered', 'In Progress', 'Engagement'];
+        metrics.forEach((metric, index) => {
+          const value = metric.querySelector('.value');
+          const label = metric.querySelector('.label');
+          
+          // Set value
+          switch(index) {
+            case 0:
+              value.textContent = student.sessions;
+              break;
+            case 1:
+              value.textContent = student.mastered;
+              break;
+            case 2:
+              value.textContent = student.inProgress;
+              break;
+            case 3:
+              value.textContent = student.engagement + '%';
+              // Update engagement color
+              if (student.engagement < AT_RISK_THRESHOLD) {
+                value.style.color = '#ef4444';
+              } else if (student.engagement >= ACTIVE_THRESHOLD) {
+                value.style.color = '#10b981';
+              } else {
+                value.style.color = '';
+              }
+              break;
+          }
+          
+          // Set label
+          label.textContent = labels[index];
+        });
+      }
+
+      // Define constants
+      const AT_RISK_THRESHOLD = 70;
+      const ACTIVE_THRESHOLD = 80;
+      const periodLabels = {
+        'dod': 'DoD',
+        'wow': 'WoW',
+        'mom': 'MoM'
+      };
+
+      // Time period selection handler
+      timeSelect.addEventListener('change', function() {
+        const selectedPeriod = this.value.toLowerCase();
+        trendElements.forEach(trend => {
+          const newValue = trend.getAttribute(`data-${selectedPeriod}`);
+          if (newValue) {
+            // Store original color if it exists
+            const originalColor = trend.style.color;
+            // Update the text with period label
+            trend.innerHTML = `${newValue} <span class="period">${periodLabels[selectedPeriod]}</span>`;
+            // Check if it's a negative trend
+            if (newValue.includes('↓')) {
+              trend.style.color = '#ef4444';
+            } else if (originalColor && !originalColor.includes('#ef4444')) {
+              trend.style.color = '#10b981';
+            }
+          }
+        });
+      });
+
+      // Filter button click handlers
+      function applyFilter(filter) {
+        // Update button states
+        filterButtons.forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-filter') === filter.toLowerCase().replace(/\s+/g, '-'));
+        });
+
+        // Apply filter to student cards
+        const studentCards = document.querySelectorAll('.student-card');
+        studentCards.forEach(card => {
+          const engagementValue = parseInt(card.querySelector('.metric:last-child .value').textContent);
+          let visible = true;
+          
+          switch(filter) {
+            case 'Active':
+              visible = engagementValue >= ACTIVE_THRESHOLD;
+              break;
+            case 'At Risk':
+              visible = engagementValue < AT_RISK_THRESHOLD;
+              break;
+          }
+          
+          card.style.display = visible ? '' : 'none';
+        });
+      }
+
+      // Add click handlers to filter buttons
+      filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const filter = button.textContent.trim();
+          applyFilter(filter);
+        });
+      });
+
+      // Handle time period changes
+      timeSelect.addEventListener('change', function() {
+        const period = this.value;
+        const trends = document.querySelectorAll('.trend');
+        
+        trends.forEach(trend => {
+          const value = trend.getAttribute(`data-${period}`);
+          if (value) {
+            trend.innerHTML = `${value} <span class="period">${periodLabels[period]}</span>`;
+          }
+        });
+      });
+
+      // Initialize class and time period selectors
+      classSelect.value = 'spanish';
+      timeSelect.value = 'dod';
+      
+      // Initial setup with Spanish class
+      updateDashboard('spanish');
+      applyFilter('All Students');
+
+      // Update dashboard when class changes
+      classSelect.addEventListener('change', function() {
+        const selectedClass = this.value;
+        
+        // Update dashboard with new class data
+        updateDashboard(selectedClass);
+        
+        // Reset filters to 'All Students'
+        filterButtons.forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-filter') === 'all-students');
+        });
+        
+        // Show all students in the new class
+        applyFilter('All Students');
+      });
+
+      // Initial setup
+      classSelect.value = 'spanish';
+      updateDashboard('spanish');
+      applyFilter('All Students');
+
+      filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          // Remove active class from all buttons
+          filterButtons.forEach(btn => btn.classList.remove('active'));
+          // Add active class to clicked button
+          button.classList.add('active');
+
+          const filter = button.textContent.trim();
+
+          studentCards.forEach(card => {
+            const engagementValue = card.querySelector('.metric:last-child .value');
+            const engagement = parseInt(engagementValue.textContent);
+            
+            switch(filter) {
+              case 'Active':
+                card.style.display = engagement >= ACTIVE_THRESHOLD ? '' : 'none';
+                break;
+              case 'At Risk':
+                card.style.display = engagement < AT_RISK_THRESHOLD ? '' : 'none';
+                break;
+              default: // 'All Students'
+                card.style.display = '';
+            }
+          });
+        });
+      });
+    });
+  </script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Inter', sans-serif; 
+      line-height: 1.6;
+      background: #f8f9fa;
+      color: #2E3856;
+      padding-top: 90px;
+    }
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    
+    .dashboard {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      margin-top: 2rem;
+    }
+    
+    .overview {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    
+    .overview-header {
+      margin-bottom: 2rem;
+    }
+    
+    .overview-top {
+      margin-bottom: 1.5rem;
+    }
+
+    .overview-selects {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .select-input {
+      padding: 0.5rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 0.375rem;
+      background-color: white;
+      font-size: 0.875rem;
+      color: #374151;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .select-input:hover {
+      border-color: #d1d5db;
+    }
+
+    .select-input:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 1px #3b82f6;
+    }
+    
+    .overview-title {
+      font-size: 1.5rem;
+      color: #1a1a1a;
+      font-weight: 600;
+    }
+    
+    .overview-controls {
+      display: flex;
+      justify-content: flex-start;
+      gap: 1rem;
+    }
+    
+    .time-select {
+      padding: 0.625rem 2.5rem 0.625rem 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      background: white;
+      color: #1a1a1a;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236b7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 1rem;
+      min-width: 150px;
+    }
+    
+    .time-select:focus {
+      outline: none;
+      border-color: #8e44ad;
+      box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
+    }
+    
+    .overview-header h2 {
+      font-size: 1.5rem;
+      color: #1a1a1a;
+    }
+    
+    .overview-header .language {
+      font-size: 1rem;
+      color: #6b7280;
+      font-weight: 500;
+    }
+    
+    .stats-overview {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      position: relative;
+      z-index: 100;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      position: relative;
+    }
+    
+    .stat-card h3 {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    
+    .stat-card .value {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+    
+    .stat-card .trend {
+      font-size: 0.875rem;
+      color: #10b981;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      margin-top: 0.5rem;
+    }
+    
+    .student-list {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      overflow: hidden;
+    }
+
+    .student-metrics-header {
+      display: grid;
+      grid-template-columns: 56px 1fr repeat(4, minmax(100px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem 1.5rem;
+      background: #f8f9fa;
+      border-bottom: 1px solid #e5e7eb;
+      position: relative;
+      z-index: 200;
+    }
+
+    .student-metrics-header .spacer {
+      grid-column: span 2;
+    }
+
+    .student-metrics-header .metric {
+      text-align: center;
+      position: relative;
+    }
+
+    .student-metrics-header .tooltip {
+      bottom: auto;
+      top: calc(100% + 10px);
+    }
+
+    .student-metrics-header .tooltip::after {
+      top: auto;
+      bottom: 100%;
+      border-top-color: transparent;
+      border-bottom-color: #1a1a1a;
+    }
+
+    .student-metrics-header .value {
+      font-size: 1rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 0.25rem;
+    }
+
+    .student-metrics-header .label {
+      font-size: 0.875rem;
+      color: #6b7280;
+    }
+    
+    .student-card {
+      display: grid;
+      grid-template-columns: auto 1fr repeat(4, minmax(100px, 1fr));
+      align-items: center;
+      gap: 1.5rem;
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+      position: relative;
+      transition: all 0.3s;
+      background: white;
+      isolation: isolate;
+    }
+
+    .student-name {
+      position: relative;
+      cursor: help;
+    }
+    
+    .student-card {
+      position: relative;
+      z-index: 1;
+    }
+    
+    .student-card:hover {
+      z-index: 100;
+    }
+    
+    .student-card .info {
+      position: relative;
+    }
+    
+    .tooltip-wrapper {
+      position: absolute;
+      left: 0;
+      top: 100%;
+      width: 100%;
+      padding-top: 8px;
+      z-index: 1000;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s ease-out, visibility 0.2s;
+    }
+    
+    .student-name:hover ~ .tooltip-wrapper {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .focus-tooltip {
+      position: absolute;
+      left: 0;
+      background: #1a1a1a;
+      color: white;
+      padding: 12px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      line-height: 1.6;
+      white-space: normal;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+      min-width: 280px;
+      max-width: 400px;
+      transform: translateY(0);
+    }
+    
+    .focus-tooltip::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: 20px;
+      width: 8px;
+      height: 8px;
+      background: #1a1a1a;
+      transform: rotate(45deg);
+    }
+    
+    .student-name:hover .focus-tooltip {
+      transform: translateY(0);
+    }
+
+    .focus-tooltip::before {
+      content: '';
+      position: absolute;
+      top: -4px;
+      left: 15px;
+      width: 8px;
+      height: 8px;
+      background: #1a1a1a;
+      transform: rotate(45deg);
+    }
+
+    .student-name:hover .focus-tooltip {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .student-card .metric {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .student-card[style*="display: none"] {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    
+    .student-card:last-child {
+      border-bottom: none;
+    }
+    
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 500;
+      color: #6b7280;
+    }
+    
+    .info {
+      position: relative;
+      cursor: pointer;
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .info h4 {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-bottom: 0.25rem;
+    }
+    
+    .info p {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-top: 0.25rem;
+    }
+
+    .tooltip {
+      background: #1a1a1a;
+      color: white;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      line-height: 1.5;
+      white-space: normal;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      max-width: 300px;
+      width: max-content;
+      position: relative;
+    }
+
+    .tooltip::before {
+      content: '';
+      position: absolute;
+      top: -6px;
+      left: 20px;
+      border-width: 0 6px 6px 6px;
+      border-style: solid;
+      border-color: transparent transparent #1a1a1a transparent;
+    }
+
+    .info {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .student-details {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .tooltip-container {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      padding-top: 8px;
+      display: none;
+      z-index: 1000;
+    }
+
+    .info:hover .tooltip-container {
+      display: block;
+    }
+
+    .student-list {
+      position: relative;
+    }
+    
+    .metric {
+      text-align: center;
+    }
+    
+    .metric .value {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 0.25rem;
+      transition: color 0.2s;
+    }
+
+    .student-card .metric:last-child .value {
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      background: #f3f4f6;
+    }
+
+    .student-card .metric:last-child .value[style*="color: #ef4444"] {
+      background: #fef2f2;
+    }
+
+    .student-card .metric:last-child .value[style*="color: #10b981"] {
+      background: #f0fdf4;
+    }
+    
+    .metric .label {
+      font-size: 0.75rem;
+      color: #6b7280;
+    }
+    
+
+    
+    .has-tooltip {
+      position: relative;
+      cursor: help;
+    }
+
+    .tooltip {
+      position: absolute;
+      background: #1a1a1a;
+      color: white;
+      padding: 0.75rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      z-index: inherit;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s;
+      width: max-content;
+      max-width: 300px;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 6px solid transparent;
+      border-top-color: #1a1a1a;
+    }
+    
+    .has-tooltip:hover .tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .filters {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
+    }
+    
+    .metrics-legend {
+      display: none;
+    }
+    
+    .metrics-legend .metric {
+      position: relative;
+    }
+    
+    .metrics-legend .label {
+      font-weight: 500;
+      color: #4b4b4b;
+    }
+    
+    .filter-btn {
+      padding: 0.625rem 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      color: #6b7280;
+      background: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-weight: 500;
+      min-width: 100px;
+      text-align: center;
+    }
+    
+    .filter-btn:hover {
+      border-color: #8e44ad;
+      color: #8e44ad;
+    }
+    
+    .filter-btn.active {
+      background: #8e44ad;
+      color: white;
+      border-color: #8e44ad;
+      box-shadow: 0 2px 4px rgba(142, 68, 173, 0.2);
+    }
+    
+    .filter-btn:hover {
+      background: #f8f9fa;
+      border-color: #d1d5db;
+    }
+    
+    .filter-btn.active:hover {
+      background: #9b59b6;
+      border-color: #9b59b6;
+      color: white;
+    }
+    
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 1.25rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+    }
+    .nav-logo {
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: #111;
+      letter-spacing: -0.02em;
+      transition: color 0.3s ease;
+      text-decoration: none;
+    }
+    .nav-logo:hover {
+      color: #0070f3;
+    }
+    .nav-btns {
+      display: flex;
+      gap: 1rem;
+    }
+    .nav-btns a {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      letter-spacing: -0.01em;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+    }
+    .nav-btns a.login {
+      background: #0070f3;
+      color: white;
+      box-shadow: 0 2px 4px rgba(0,112,243,0.1);
+    }
+    .nav-btns a.login:hover {
+      background: #0061d5;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,112,243,0.2);
+    }
+    .nav-btns a.login:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0,112,243,0.1);
+    }
+    
+    .hero {
+      background: linear-gradient(135deg, #8e44ad, #9b59b6);
+      color: white;
+      padding: 6rem 2rem;
+      text-align: center;
+      border-radius: 24px;
+      margin: 0 auto 4rem;
+      max-width: 1200px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('https://images.unsplash.com/photo-1488229297570-58520851e868?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NjIwNjV8MHwxfHNlYXJjaHwxfHxhcnRpZmljaWFsJTIwaW50ZWxsaWdlbmNlJTIwZGF0YXxlbnwwfDB8fHwxNzQxNjI3NTkwfDA&ixlib=rb-4.0.3&q=80&w=1080') center/cover;
+      opacity: 0.1;
+      z-index: 0;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    .hero h1 { 
+      font-size: 3.5rem; 
+      margin-bottom: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .hero p {
+      font-size: 1.5rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .insight {
+      padding: 2rem;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      border: 2px solid #f0f0f0;
+      margin-bottom: 0;
+    }
+    .insight:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      border-color: #8e44ad;
+    }
+    .insight h2 { 
+      color: #8e44ad; 
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .insight p {
+      color: #4b4b4b;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    .insight-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(142,68,173,0.1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    .insight-icon svg {
+      width: 24px;
+      height: 24px;
+      color: #8e44ad;
+    }
+    .insight-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
+    .metric {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .metric h3 { color: #5f27cd; }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      background: #8e44ad;
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      margin-top: auto;
+    }
+    .btn:hover { 
+      background: #9b59b6;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(142,68,173,0.2);
+    }
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+    .btn svg {
+      width: 20px;
+      height: 20px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Recab</a>
+    <div class="nav-btns">
+      <a href="educator-login.html" class="login">Educator Login</a>
+      <a href="student-login.html" class="login">Student Login</a>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="dashboard">
+      <div class="overview">
+        <div class="overview-header">
+          <div class="overview-top">
+            <div class="overview-selects">
+              <select id="classSelect" class="select-input">
+                <option value="spanish">Spanish</option>
+                <option value="algebra">Algebra</option>
+                <option value="biology">Biology</option>
+              </select>
+              <select class="select-input" id="timeSelect">
+                <option value="dod">Day over Day</option>
+                <option value="wow">Week over Week</option>
+                <option value="mom">Month over Month</option>
+              </select>
+            </div>
+            <h2 class="overview-title">Class Overview - Spanish</h2>
+          </div>
+          <div class="overview-controls">
+            <div class="filters">
+              <button class="filter-btn active" data-filter="all-students">All Students</button>
+              <button class="filter-btn" data-filter="active">Active</button>
+              <button class="filter-btn" data-filter="at-risk">At Risk</button>
+            </div>
+        </div>
+        <div class="stats-overview">
+          <div class="stat-card has-tooltip">
+            <h3>Class Average</h3>
+            <div class="value">87%</div>
+            <div class="trend" data-dod="↑ 5%" data-wow="↑ 8%" data-mom="↑ 12%">↑ 5% <span class="period">DoD</span></div>
+            <div class="tooltip">Overall class performance across all metrics</div>
+          </div>
+          <div class="stat-card has-tooltip">
+            <h3>Total Sessions</h3>
+            <div class="value">202</div>
+            <div class="trend" data-dod="↑ 12" data-wow="↑ 45" data-mom="↑ 156">↑ 12 <span class="period">DoD</span></div>
+            <div class="tooltip">Total number of sessions completed by all students</div>
+          </div>
+          <div class="stat-card has-tooltip">
+            <h3>Concepts Mastered</h3>
+            <div class="value">3.7k</div>
+            <div class="trend" data-dod="↑ 156" data-wow="↑ 452" data-mom="↑ 1.2k">↑ 156 <span class="period">DoD</span></div>
+            <div class="tooltip">Total concepts mastered by the class</div>
+          </div>
+          <div class="stat-card has-tooltip">
+            <h3>Active Students</h3>
+            <div class="value">85%</div>
+            <div class="trend" data-dod="↑ 3%" data-wow="↑ 5%" data-mom="↑ 8%">↑ 3% <span class="period">DoD</span></div>
+            <div class="tooltip">Percentage of students actively participating this week</div>
+          </div>
+          <div class="stat-card has-tooltip">
+            <h3>Avg. Engagement</h3>
+            <div class="value">82%</div>
+            <div class="trend" data-dod="↑ 4%" data-wow="↑ 6%" data-mom="↑ 10%">↑ 4% <span class="period">DoD</span></div>
+            <div class="tooltip">Average student engagement based on participation and completion</div>
+          </div>
+          <div class="stat-card has-tooltip">
+            <h3>At Risk</h3>
+            <div class="value">2</div>
+            <div class="trend" style="color: #ef4444" data-dod="↑ 1" data-wow="↓ 2" data-mom="↓ 5">↑ 1 <span class="period">DoD</span></div>
+            <div class="tooltip">Number of students requiring additional support</div>
+          </div>
+        </div>
+
+        <div class="metrics-legend">
+          <div class="metric has-tooltip">
+            <div class="label">Sessions</div>
+            <div class="tooltip">Track student progress through the curriculum, including completed sessions, weekly activity, and learning pace</div>
+          </div>
+          <div class="metric has-tooltip">
+            <div class="label">Words</div>
+            <div class="tooltip">Monitor vocabulary growth, including mastered words, words in progress, and learning retention</div>
+          </div>
+          <div class="metric has-tooltip">
+            <div class="label">Engagement</div>
+            <div class="tooltip">Measure student participation through practice frequency, discussion involvement, and exercise completion</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="student-list">
+        <div class="student-metrics-header">
+          <div class="spacer"></div>
+          <div class="metric">
+            <div class="value">Sessions</div>
+            <div class="label">Completed</div>
+            <div class="tooltip">Track student progress through the curriculum</div>
+          </div>
+          <div class="metric has-tooltip">
+            <div class="value">Concepts</div>
+            <div class="label">Mastered</div>
+            <div class="tooltip">Total concepts mastered by students</div>
+          </div>
+          <div class="metric has-tooltip">
+            <div class="value">In Progress</div>
+            <div class="label">Concepts</div>
+            <div class="tooltip">Concepts currently being learned by students</div>
+          </div>
+          <div class="metric has-tooltip">
+            <div class="value">Engagement</div>
+            <div class="label">Score</div>
+            <div class="tooltip">Measure student participation and completion</div>
+          </div>
+        </div>
+        <div class="student-card">
+          <div class="avatar">AS</div>
+          <div class="info has-tooltip">
+            <h4>Alice Smith</h4>
+            <p>Advanced Level</p>
+            <div class="tooltip">Currently focusing on: Subjunctive mood in complex sentences</div>
+          </div>
+          <div class="metric">
+            <div class="value">42</div>
+            <div class="label">Sessions</div>
+          </div>
+          <div class="metric">
+            <div class="value">850</div>
+            <div class="label">Mastered</div>
+          </div>
+          <div class="metric">
+            <div class="value">120</div>
+            <div class="label">In Progress</div>
+          </div>
+          <div class="metric">
+            <div class="value">95%</div>
+            <div class="label">Engagement</div>
+          </div>
+        </div>
+
+        <div class="student-card">
+          <div class="avatar">BJ</div>
+          <div class="info has-tooltip">
+            <h4>Bob Johnson</h4>
+            <p>Intermediate Level</p>
+            <div class="tooltip">Currently focusing on: Past perfect tense conjugations</div>
+          </div>
+          <div class="metric">
+            <div class="value">35</div>
+            <div class="label">Sessions</div>
+          </div>
+          <div class="metric">
+            <div class="value">620</div>
+            <div class="label">Mastered</div>
+          </div>
+          <div class="metric">
+            <div class="value">95</div>
+          </div>
+          <div class="metric">
+            <div class="value">82%</div>
+          </div>
+        </div>
+
+        <div class="student-card">
+          <div class="avatar">CL</div>
+          <div class="student-info">
+            <h4>Carol Lee</h4>
+            <p>Beginner Level</p>
+          </div>
+          <div class="metric">
+            <div class="value">28</div>
+          </div>
+          <div class="metric">
+            <div class="value">450</div>
+          </div>
+          <div class="metric">
+            <div class="value">85</div>
+          </div>
+          <div class="metric">
+            <div class="value">75%</div>
+          </div>
+        </div>
+
+        <div class="student-card">
+          <div class="avatar">DW</div>
+          <div class="student-info">
+            <h4>David Wilson</h4>
+            <p>Advanced Level</p>
+          </div>
+          <div class="metric">
+            <div class="value">45</div>
+          </div>
+          <div class="metric">
+            <div class="value">920</div>
+          </div>
+          <div class="metric">
+            <div class="value">150</div>
+          </div>
+          <div class="metric">
+            <div class="value">98%</div>
+          </div>
+        </div>
+
+        <div class="student-card">
+          <div class="avatar">EM</div>
+          <div class="student-info">
+            <h4>Emma Martinez</h4>
+            <p>Intermediate Level</p>
+          </div>
+          <div class="metric">
+            <div class="value">32</div>
+          </div>
+          <div class="metric">
+            <div class="value">580</div>
+          </div>
+          <div class="metric">
+            <div class="value">90</div>
+          </div>
+          <div class="metric">
+            <div class="value">78%</div>
+          </div>
+        </div>
+
+        <div class="student-card">
+          <div class="avatar">FT</div>
+          <div class="student-info">
+            <h4>Frank Thompson</h4>
+            <p>Beginner Level</p>
+          </div>
+          <div class="metric">
+            <div class="value">20</div>
+          </div>
+          <div class="metric">
+            <div class="value">320</div>
+          </div>
+          <div class="metric">
+            <div class="value">65</div>
+          </div>
+          <div class="metric">
+            <div class="value">65%</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unschooling Principles - Recab</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Inter', sans-serif; 
+      line-height: 1.6;
+      background: #fff;
+      color: #2E3856;
+      padding-top: 90px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      padding: 1.25rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+    }
+    .nav-logo {
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: #111;
+      letter-spacing: -0.02em;
+      transition: color 0.3s ease;
+      text-decoration: none;
+    }
+    .nav-logo:hover {
+      color: #0070f3;
+    }
+    .nav-btns {
+      display: flex;
+      gap: 1rem;
+    }
+    .nav-btns a {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      letter-spacing: -0.01em;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+    }
+    .nav-btns a.login {
+      background: #0070f3;
+      color: white;
+      box-shadow: 0 2px 4px rgba(0,112,243,0.1);
+    }
+    .nav-btns a.login:hover {
+      background: #0061d5;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0,112,243,0.2);
+    }
+    .nav-btns a.login:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0,112,243,0.1);
+    }
+    
+    .hero {
+      background: linear-gradient(135deg, #58cc02, #7ed957);
+      color: white;
+      padding: 6rem 2rem;
+      text-align: center;
+      border-radius: 24px;
+      margin: 0 auto 4rem;
+      max-width: 1200px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: url('https://images.unsplash.com/photo-1503676260728-1c00da094a0b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NjIwNjV8MHwxfHNlYXJjaHwxfHxjaGlsZHJlbiUyMGxlYXJuaW5nJTIwb3V0ZG9vcnN8ZW58MHwwfHx8MTc0MTYyNzU5MHww&ixlib=rb-4.0.3&q=80&w=1080') center/cover;
+      opacity: 0.1;
+      z-index: 0;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 1;
+    }
+    .hero h1 { 
+      font-size: 3.5rem; 
+      margin-bottom: 1.5rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+    .hero p {
+      font-size: 1.5rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    
+    .content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      position: relative;
+    }
+    
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 1001;
+    }
+    
+    .overlay.active {
+      display: block;
+      opacity: 1;
+    }
+    
+    .expanded-article {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      background: white;
+      border-radius: 24px;
+      padding: 3rem;
+      z-index: 1002;
+      display: none;
+      opacity: 0;
+      transition: all 0.3s ease;
+      overflow-y: auto;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+
+    .expanded-article h2 {
+      color: #58cc02;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .expanded-article h3 {
+      color: #2E3856;
+      font-size: 1.4rem;
+      margin: 2rem 0 1rem;
+      letter-spacing: -0.01em;
+    }
+
+    .expanded-article p {
+      color: #4b4b4b;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+    }
+
+    .expanded-article ul {
+      list-style: none;
+      padding: 0;
+      margin: 1.5rem 0;
+    }
+
+    .expanded-article ul li {
+      position: relative;
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+      color: #4b4b4b;
+      line-height: 1.6;
+    }
+
+    .expanded-article ul li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.6rem;
+      width: 8px;
+      height: 8px;
+      background: #58cc02;
+      border-radius: 50%;
+    }
+
+    .expanded-article .quote {
+      font-size: 1.2rem;
+      font-style: italic;
+      color: #58cc02;
+      border-left: 4px solid #58cc02;
+      padding: 1rem 0 1rem 2rem;
+      margin: 2rem 0;
+      background: rgba(88,204,2,0.05);
+      border-radius: 0 8px 8px 0;
+    }
+    
+    .expanded-article.active {
+      display: block;
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    
+    .expanded-article.animate-in {
+      animation: articlePulse 0.3s ease-out;
+    }
+    
+    @keyframes articlePulse {
+      0% { transform: translate(-50%, -50%) scale(0.95); }
+      50% { transform: translate(-50%, -50%) scale(1.02); }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+    
+    .expanded-article .close-btn {
+      position: absolute;
+      top: 1.5rem;
+      right: 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.5rem;
+      color: #666;
+      transition: color 0.2s ease;
+    }
+    
+    .expanded-article .close-btn:hover {
+      color: #58cc02;
+    }
+    
+    .expanded-article .close-btn svg {
+      width: 24px;
+      height: 24px;
+    }
+    .principle {
+      padding: 2rem;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.05);
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      border: 2px solid #f0f0f0;
+      margin-bottom: 0;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .principle::after {
+      content: 'Click to read more';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.9) 20%, #fff);
+      color: #58cc02;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(100%);
+      transition: all 0.3s ease;
+    }
+    
+    .principle:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      border-color: #58cc02;
+    }
+    
+    .principle:hover::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .principle h2 { 
+      color: #58cc02; 
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .principle p {
+      color: #4b4b4b;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+    .principle-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(88,204,2,0.1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    .principle-icon svg {
+      width: 24px;
+      height: 24px;
+      color: #58cc02;
+    }
+    .quote {
+      font-style: italic;
+      color: #666;
+      border-left: 4px solid #58cc02;
+      padding-left: 1rem;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+    .quote {
+      font-style: italic;
+      color: #666;
+      border-left: 4px solid #00a8ff;
+      padding-left: 1rem;
+      margin: 2rem 0;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      background: #58cc02;
+      color: white;
+      text-decoration: none;
+      border-radius: 12px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      margin-top: auto;
+    }
+    .btn:hover { 
+      background: #7ed957;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(88,204,2,0.2);
+    }
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+    .btn svg {
+      width: 20px;
+      height: 20px;
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Recab</a>
+    <div class="nav-btns">
+      <a href="educator-login.html" class="login">Educator Login</a>
+      <a href="student-login.html" class="login">Student Login</a>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-content">
+      <h1>Unschooling Principles</h1>
+      <p>Embrace natural curiosity and learn through real-world experiences</p>
+    </div>
+  </div>
+
+  <div class="content">
+    <div class="principle">
+      <div class="principle-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+      </div>
+      <h2>Natural Learning Process</h2>
+      <p>Unschooling recognizes that learning is a natural process that happens through real-life experiences, curiosity, and personal interests.</p>
+      <div class="quote">
+        "Education is not preparation for life; education is life itself." - John Dewey
+      </div>
+      
+    </div>
+
+    <div class="principle">
+      <div class="principle-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+        </svg>
+      </div>
+      <h2>Interest-Led Learning</h2>
+      <p>Students are encouraged to pursue their passions and interests, leading to deeper engagement and more meaningful learning experiences.</p>
+
+    </div>
+
+    <div class="principle">
+      <div class="principle-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/>
+        </svg>
+      </div>
+      <h2>Real-World Application</h2>
+      <p>Learning happens through practical experiences, projects, and real-world problem-solving rather than traditional textbook-based instruction.</p>
+    </div>
+
+    
+  </div>
+
+  <div class="overlay"></div>
+  
+  <div class="expanded-article">
+    <button class="close-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+    <h2></h2>
+    <div class="article-content"></div>
+  </div>
+
+  <script>
+    const articles = {
+      'Natural Learning Process': `
+        <p>Unschooling recognizes that learning is a natural process that happens through real-life experiences, curiosity, and personal interests. This approach is based on the belief that humans are innately curious and driven to learn.</p>
+        
+        <h3>Key Principles of Natural Learning</h3>
+        <ul>
+          <li>Learning happens all the time, not just during designated "study hours"</li>
+          <li>Children are naturally curious and will pursue knowledge when interested</li>
+          <li>Real-world experiences provide the best learning opportunities</li>
+          <li>Learning is integrated into daily life rather than separated from it</li>
+        </ul>
+
+        <h3>The Role of Parents and Educators</h3>
+        <p>In natural learning, parents and educators act as facilitators rather than traditional teachers. Their role includes:</p>
+        <ul>
+          <li>Creating rich learning environments</li>
+          <li>Providing resources and opportunities</li>
+          <li>Supporting children's interests and questions</li>
+          <li>Modeling lifelong learning</li>
+        </ul>
+
+        <p>Research has shown that this natural approach to learning can lead to better retention, deeper understanding, and a lifelong love of learning. When children are allowed to follow their curiosity and learn at their own pace, they develop stronger problem-solving skills and greater creativity.</p>
+
+        <div class="quote">
+          "Education is not preparation for life; education is life itself." - John Dewey
+        </div>
+      `,
+      'Interest-Led Learning': `
+        <p>Interest-led learning is at the heart of the unschooling approach. When learners are allowed to pursue their genuine interests, they engage more deeply and retain information more effectively.</p>
+
+        <h3>Benefits of Interest-Led Learning</h3>
+        <ul>
+          <li>Increased motivation and engagement</li>
+          <li>Better retention of information</li>
+          <li>Development of self-directed learning skills</li>
+          <li>Natural integration of multiple subjects</li>
+        </ul>
+
+        <h3>How It Works in Practice</h3>
+        <p>Interest-led learning can take many forms:</p>
+        <ul>
+          <li>Project-based learning inspired by personal interests</li>
+          <li>Deep dives into specific topics</li>
+          <li>Hands-on experiments and exploration</li>
+          <li>Real-world application of skills</li>
+        </ul>
+
+        <p>When learners follow their interests, they naturally encounter and integrate multiple subjects. For example, a passion for cooking might lead to learning about chemistry, mathematics, history, and cultural studies.</p>
+
+        <div class="quote">
+          "The most effective kind of education is that a child should play amongst lovely things." - Plato
+        </div>
+      `,
+      'Real-World Application': `
+        <p>Real-world application transforms abstract concepts into tangible experiences, making learning more meaningful and memorable. This approach bridges the gap between theory and practice.</p>
+
+        <h3>Examples of Real-World Learning</h3>
+        <ul>
+          <li>Learning math through cooking and shopping</li>
+          <li>Understanding science through gardening and nature observation</li>
+          <li>Developing writing skills through blogging or storytelling</li>
+          <li>Learning history through travel and museum visits</li>
+        </ul>
+
+        <h3>Benefits of Practical Learning</h3>
+        <p>When learning is connected to real-world applications:</p>
+        <ul>
+          <li>Concepts become more meaningful and memorable</li>
+          <li>Problem-solving skills develop naturally</li>
+          <li>Learning becomes more engaging and relevant</li>
+          <li>Skills are immediately applicable</li>
+        </ul>
+
+        <p>This approach helps learners understand why they're learning something and how it applies to their lives, increasing motivation and retention.</p>
+
+        <div class="quote">
+          "Tell me and I forget, teach me and I may remember, involve me and I learn." - Benjamin Franklin
+        </div>
+      `
+    };
+
+    const overlay = document.querySelector('.overlay');
+    const expandedArticle = document.querySelector('.expanded-article');
+    const closeBtn = document.querySelector('.close-btn');
+    const principles = document.querySelectorAll('.principle');
+
+    function showArticle(title, content) {
+      expandedArticle.querySelector('h2').textContent = title;
+      expandedArticle.querySelector('.article-content').innerHTML = content;
+      overlay.classList.add('active');
+      expandedArticle.classList.add('active');
+      document.body.style.overflow = 'hidden';
+      
+      // Scroll to top of article
+      expandedArticle.scrollTop = 0;
+      
+      // Add animation class
+      expandedArticle.classList.add('animate-in');
+      setTimeout(() => expandedArticle.classList.remove('animate-in'), 300);
+    }
+
+    function hideArticle() {
+      overlay.classList.remove('active');
+      expandedArticle.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    principles.forEach(principle => {
+      principle.addEventListener('click', () => {
+        const title = principle.querySelector('h2').textContent;
+        if (articles[title]) {
+          showArticle(title, articles[title]);
+        }
+      });
+    });
+
+    overlay.addEventListener('click', hideArticle);
+    closeBtn.addEventListener('click', hideArticle);
+  </script>
+</body>
+</html>

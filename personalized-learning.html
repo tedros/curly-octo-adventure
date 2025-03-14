@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personalized Learning - Recab</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    /* Reset and global styles */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      color: #333;
+      background-color: #f5f5f5;
+      padding-top: 90px;
+    }
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 1.25rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.05);
+    }
+    .nav-logo {
+      font-weight: 600;
+      font-size: 1.3rem;
+      color: #111;
+      letter-spacing: -0.02em;
+      transition: color 0.3s ease;
+      text-decoration: none;
+    }
+    .nav-logo:hover { color: #1cb0f6; }
+    .nav-btns { display: flex; gap: 1rem; }
+    .nav-btns a {
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 0.95rem;
+      letter-spacing: -0.01em;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      color: inherit;
+    }
+    .nav-btns a.login {
+      background: #1cb0f6;
+      color: white;
+      box-shadow: 0 2px 4px rgba(28,176,246,0.1);
+    }
+    .nav-btns a.login:hover {
+      background: #19a0e0;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(28,176,246,0.2);
+    }
+    .nav-btns a.login:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(28,176,246,0.1);
+    }
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #1cb0f6, #58c2f7);
+      color: white;
+      padding: 6rem 2rem;
+      text-align: center;
+      border-radius: 24px;
+      margin: 0 auto 4rem;
+      max-width: 1200px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NjIwNjV8MHwxfHNlYXJjaHwxfHxwZXJzb25hbGl6ZWQlMjBsZWFybmluZ3xlbnwwfDB8fHwxNzQxNjI3NTkwfDA&ixlib=rb-4.0.3&q=80&w=1080')
+        center/cover;
+      opacity: 0.1;
+      z-index: 0;
+    }
+    .hero-content { position: relative; z-index: 1; }
+    .hero h1 { font-size: 3.5rem; margin-bottom: 1.5rem; font-weight: 800; letter-spacing: -0.03em; }
+    .hero p { font-size: 1.25rem; max-width: 800px; margin: 0 auto; opacity: 0.9; }
+    /* Section: Unschooling Principles */
+    .section {
+      padding: 4rem 2rem;
+      background-size: cover;
+      background-position: center;
+      color: #fff;
+      text-align: center;
+    }
+    .section .content {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 2rem;
+      border-radius: 10px;
+      display: inline-block;
+    }
+    .section .btn {
+      display: inline-block;
+      margin-top: 1rem;
+      padding: 0.75rem 1.5rem;
+      background: #1cb0f6;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      transition: background 0.3s ease;
+    }
+    .section .btn:hover { background: #19a0e0; }
+    /* Content grid and features */
+    .content {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .feature {
+      background: white;
+      border-radius: 10px;
+      padding: 2rem;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .feature::after {
+      content: 'Click to read more';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 1rem;
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.9) 20%, #fff);
+      color: #58cc02;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(100%);
+      transition: all 0.3s ease;
+    }
+    .feature:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      border-color: #1cb0f6;
+    }
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      background: rgba(28,176,246,0.1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    .feature-icon svg { width: 24px; height: 24px; color: #1cb0f6; }
+    .feature h2 { color: #1cb0f6; margin-bottom: 1rem; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; }
+    .feature p { color: #4b4b4b; line-height: 1.7; margin: 0; }
+    /* Overlay and expanded article */
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      z-index: 1000;
+    }
+    .overlay.active { display: block; }
+    .expanded-article {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      background: white;
+      border-radius: 10px;
+      padding: 2rem;
+      display: none;
+      z-index: 1001;
+      overflow-y: auto;
+    }
+    .expanded-article.active { display: block; }
+    .expanded-article h2 { color: #1cb0f6; margin-bottom: 1.5rem; }
+    .expanded-article h3 { color: #333; margin: 1.5rem 0 1rem; }
+    .expanded-article p { margin-bottom: 1rem; }
+    .expanded-article ul { margin: 1rem 0; padding-left: 1.5rem; }
+    .expanded-article li { margin-bottom: 0.5rem; }
+    .quote {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      background: #f5f5f5;
+      border-left: 4px solid #1cb0f6;
+      font-style: italic;
+    }
+    .close-btn {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #666;
+    }
+    .close-btn:hover { color: #333; }
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .hero p { font-size: 1rem; }
+      .feature { padding: 1.5rem; }
+      .expanded-article { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Recab</a>
+    <div class="nav-btns">
+      <a href="educator-login.html" class="login">Educator Login</a>
+      <a href="student-login.html" class="login">Student Login</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-content">
+      <h1>Personalized Learning Paths</h1>
+      <p>Experience education tailored to your unique learning style, pace, and interests</p>
+    </div>
+  </div>
+
+
+
+  <!-- Features Section -->
+  <div class="content">
+    <div class="feature">
+      <div class="feature-icon">
+        <!-- SVG icon for AI-Powered Learning Assessment -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+        </svg>
+      </div>
+      <h2>AI-Powered Learning Assessment</h2>
+      <p>Our advanced AI system continuously analyzes your learning patterns, progress, and preferences to create a truly personalized educational experience.</p>
+    </div>
+
+    <div class="feature">
+      <div class="feature-icon">
+        <!-- SVG icon for Adaptive Curriculum -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+        </svg>
+      </div>
+      <h2>Adaptive Curriculum</h2>
+      <p>Content automatically adjusts to your pace and comprehension level, ensuring you're always challenged but never overwhelmed.</p>
+    </div>
+
+    <div class="feature">
+      <div class="feature-icon">
+        <!-- SVG icon for Real-Time Progress Tracking -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+        </svg>
+      </div>
+      <h2>Real-Time Progress Tracking</h2>
+      <p>Monitor your advancement with detailed analytics and insights, helping you understand your strengths and areas for improvement.</p>
+    </div>
+
+    
+  </div>
+
+  <!-- Overlay and Expanded Article Modal -->
+  <div class="overlay"></div>
+  <div class="expanded-article">
+    <button class="close-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </button>
+    <h2></h2>
+    <div class="article-content"></div>
+  </div>
+
+  <!-- Combined Script -->
+  <script>
+    window.addEventListener('load', function() {
+      const features = document.querySelectorAll('.feature');
+      const overlay = document.querySelector('.overlay');
+      const expandedArticle = document.querySelector('.expanded-article');
+      const closeBtn = document.querySelector('.close-btn');
+
+      const articleContent = {
+        'AI-Powered Learning Assessment': `
+          <p>Our AI-powered learning assessment system represents a breakthrough in personalized education, using advanced algorithms to understand and adapt to each student's unique learning journey.</p>
+          <h3>How It Works</h3>
+          <ul>
+            <li>Continuous analysis of learning patterns and behaviors</li>
+            <li>Real-time adaptation to student progress and comprehension</li>
+            <li>Identification of learning style preferences</li>
+            <li>Personalized content recommendations</li>
+          </ul>
+          <h3>Key Benefits</h3>
+          <ul>
+            <li>Precise identification of knowledge gaps</li>
+            <li>Customized learning paths based on individual needs</li>
+            <li>Early detection of potential learning challenges</li>
+            <li>Data-driven insights for educators</li>
+          </ul>
+          <div class="quote">
+            "The future of education lies in understanding and adapting to each student's unique learning journey." - Dr. Sarah Chen, Learning Sciences Expert
+          </div>
+        `,
+        'Adaptive Curriculum': `
+          <p>Our adaptive curriculum technology ensures that every student receives a learning experience perfectly tailored to their needs, abilities, and goals.</p>
+          <h3>Dynamic Content Adjustment</h3>
+          <ul>
+            <li>Real-time difficulty adjustment based on performance</li>
+            <li>Personalized content selection and sequencing</li>
+            <li>Multiple learning paths for different learning styles</li>
+            <li>Intelligent content recommendations</li>
+          </ul>
+          <h3>Personalization Features</h3>
+          <ul>
+            <li>Pace adjustment based on comprehension speed</li>
+            <li>Alternative explanation methods when needed</li>
+            <li>Custom practice exercises</li>
+            <li>Varied content formats (text, video, interactive)</li>
+          </ul>
+          <div class="quote">
+            "The best curriculum is one that grows and evolves with the student." - Prof. Michael Roberts, Educational Technology Researcher
+          </div>
+        `,
+        'Real-Time Progress Tracking': `
+          <p>Our comprehensive progress tracking system provides detailed insights into learning achievements and areas for improvement, helping both students and educators make informed decisions.</p>
+          <h3>Advanced Analytics Features</h3>
+          <ul>
+            <li>Detailed performance metrics and trends</li>
+            <li>Skill mastery visualization</li>
+            <li>Learning pace analysis</li>
+            <li>Comparative progress indicators</li>
+          </ul>
+          <h3>Actionable Insights</h3>
+          <ul>
+            <li>Identifying knowledge gaps and learning patterns</li>
+            <li>Setting and adjusting learning goals</li>
+            <li>Planning intervention strategies</li>
+            <li>Celebrating achievements and milestones</li>
+          </ul>
+          <div class="quote">
+            "What gets measured gets improved. Real-time tracking transforms education from guesswork to precision." - Emma Thompson, Educational Analytics Specialist
+          </div>
+        `,
+        'Get Started Today': `
+          <p>Begin your personalized learning journey with Recab and experience education tailored just for you.</p>
+        `
+      };
+
+      function showArticle(title) {
+        if (articleContent[title]) {
+          expandedArticle.querySelector('h2').textContent = title;
+          expandedArticle.querySelector('.article-content').innerHTML = articleContent[title];
+          overlay.classList.add('active');
+          expandedArticle.classList.add('active');
+          document.body.style.overflow = 'hidden';
+          expandedArticle.scrollTop = 0;
+        }
+      }
+
+      function closeArticle() {
+        overlay.classList.remove('active');
+        expandedArticle.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+
+      overlay.addEventListener('click', closeArticle);
+      closeBtn.addEventListener('click', closeArticle);
+
+      features.forEach(feature => {
+        feature.addEventListener('click', () => {
+          const title = feature.querySelector('h2').textContent;
+          showArticle(title);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
